@@ -67,15 +67,14 @@ public class ContentMediator {
      */
     @Path("{id}")
     @GET
-    public Response getResource(@PathParam("id") final String id, @HeaderParam("X-Forwarded-Host") final String host) {
-        LOGGER.debug("get " + id + " request to " + host);
+    public Response getResource(@PathParam("id") final String id) {
         try {
             final File publicFile = getPublicContentPath(id);
             final File uvaFile = getUVAContentPath(id);
             if (publicFile.exists()) {
-                return redirectToFile(id, publicFile, null, host);
+                return redirectToFile(id, publicFile, null);
             } else if (uvaFile.exists()) {
-                return redirectToFile(id, uvaFile, "uva", host);
+                return redirectToFile(id, uvaFile, "uva");
             } else {
                 return Response.status(404).build();
             }
@@ -85,7 +84,7 @@ public class ContentMediator {
         }
     }
 
-    private Response redirectToFile(final String id, final File file, final String authpath, final String host) throws URISyntaxException {
+    private Response redirectToFile(final String id, final File file, final String authpath) throws URISyntaxException {
         File[] files = file.listFiles((File dir, String name) -> {
             return !name.startsWith(".");
         });
@@ -94,8 +93,7 @@ public class ContentMediator {
                     + file.getAbsolutePath() + " has " + files.length + ")");
             return Response.status(404).build();
         } else {
-            return Response.temporaryRedirect(new URI(host +
-                    (authpath != null && !authpath.equals("") ? "/" + authpath : "")
+            return Response.temporaryRedirect(new URI((authpath != null && !authpath.equals("") ? "/" + authpath : "")
                             + "/" + id + "/" + files[0].getName())).build();
         }
     }
