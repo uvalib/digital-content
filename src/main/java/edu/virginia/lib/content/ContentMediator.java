@@ -30,6 +30,16 @@ public class ContentMediator {
         return new File(System.getenv("CONTENT_PATH"));
     }
 
+    /**
+     * If this app is meant to to be accessed via proxy, this is the host name at which
+     * the public accesses it.
+     */
+    private static String getHost() {
+        String host = System.getenv("OUTSIDE_HOST");
+        return (host == null ? "" : host);
+    }
+
+
     private static File getPublicContentPath(final String id) {
         return new File(getContentPath(), "public/" + id);
     }
@@ -93,7 +103,7 @@ public class ContentMediator {
                     + file.getAbsolutePath() + " has " + files.length + ")");
             return Response.status(404).build();
         } else {
-            return Response.temporaryRedirect(new URI((authpath != null && !authpath.equals("") ? "/" + authpath : "")
+            return Response.temporaryRedirect(new URI(getHost() + (authpath != null && !authpath.equals("") ? "/" + authpath : "")
                             + "/" + id + "/" + files[0].getName())).build();
         }
     }
