@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.json.Json;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -78,7 +77,7 @@ public class ContentMediator {
     @Path("{id}")
     @GET
     public Response getResource(@PathParam("id") final String id) {
-        LOGGER.debug("Request for " + id);
+        LOGGER.debug("Request for /" + id);
         try {
             final File publicFile = getPublicContentPath(id);
             final File uvaFile = getUVAContentPath(id);
@@ -113,6 +112,7 @@ public class ContentMediator {
     @Path("{id}/{filename}")
     @GET
     public Response getFile(@PathParam("id") final String id, @PathParam("filename") final String filename) {
+        LOGGER.debug("Request for /" + id + "/" + filename);
         final File publicFile = new File(getPublicContentPath(id), filename);
         if (publicFile.exists()) {
             try {
@@ -132,6 +132,7 @@ public class ContentMediator {
     @Path("uva/{id}/{filename}")
     @GET
     public Response getUvaFile(@PathParam("id") final String id, @PathParam("filename") final String filename) {
+        LOGGER.debug("Request for /uva/" + id + "/" + filename);
         final File uvaFile = new File(getUVAContentPath(id), filename);
         if (uvaFile.exists()) {
             try {
