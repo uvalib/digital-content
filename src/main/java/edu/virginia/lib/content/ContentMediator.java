@@ -117,6 +117,7 @@ public class ContentMediator {
         if (publicFile.exists()) {
             try {
                 final String contentType = Files.probeContentType(publicFile.toPath());
+                LOGGER.debug(publicFile + " found to have content type \"" + contentType + "\".");
                 return Response.status(200).entity(publicFile).header("Content-Type", contentType).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + publicFile + ".", e);
@@ -138,6 +139,7 @@ public class ContentMediator {
         if (uvaFile.exists()) {
             try {
                 final String contentType = Files.probeContentType(uvaFile.toPath());
+                LOGGER.debug(uvaFile + " found to have content type \"" + contentType + "\".");
                 return Response.status(200).entity(uvaFile).header("Content-Type", contentType).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + uvaFile + ".", e);
