@@ -116,9 +116,7 @@ public class ContentMediator {
         final File publicFile = new File(getPublicContentPath(id), filename);
         if (publicFile.exists()) {
             try {
-                final String contentType = Files.probeContentType(publicFile.toPath());
-                LOGGER.debug(publicFile + " found to have content type \"" + contentType + "\".");
-                return Response.status(200).entity(publicFile).header("Content-Type", contentType).build();
+                return Response.status(200).entity(publicFile).header("Content-Type", getMimeType(publicFile)).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + publicFile + ".", e);
                 return Response.status(500).build();
@@ -138,9 +136,7 @@ public class ContentMediator {
         final File uvaFile = new File(getUVAContentPath(id), filename);
         if (uvaFile.exists()) {
             try {
-                final String contentType = Files.probeContentType(uvaFile.toPath());
-                LOGGER.debug(uvaFile + " found to have content type \"" + contentType + "\".");
-                return Response.status(200).entity(uvaFile).header("Content-Type", contentType).build();
+                return Response.status(200).entity(uvaFile).header("Content-Type", getMimeType(uvaFile)).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + uvaFile + ".", e);
                 return Response.status(500).build();
@@ -148,6 +144,14 @@ public class ContentMediator {
         } else {
             return Response.status(404).build();
         }
+    }
+
+    private static String getMimeType(final File f) throws IOException {
+        final String contentType = Files.probeContentType(f.toPath());
+        if (contentType == null && f.getName().endsWith(".pdf")) {
+            return "application/pdf";
+        }
+        return contentType;
     }
 
 }
