@@ -78,6 +78,7 @@ public class ContentMediator {
     @Path("{id}")
     @GET
     public Response getResource(@PathParam("id") final String id) {
+        LOGGER.debug("Request for " + id);
         try {
             final File publicFile = getPublicContentPath(id);
             final File uvaFile = getUVAContentPath(id);
@@ -86,6 +87,7 @@ public class ContentMediator {
             } else if (uvaFile.exists()) {
                 return redirectToFile(id, uvaFile, "uva");
             } else {
+                LOGGER.debug("404: No file found at " + publicFile + " or " + uvaFile + ".");
                 return Response.status(404).build();
             }
         } catch (URISyntaxException e) {
