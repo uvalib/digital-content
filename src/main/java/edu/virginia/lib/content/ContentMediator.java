@@ -116,7 +116,8 @@ public class ContentMediator {
         final File publicFile = new File(getPublicContentPath(id), filename);
         if (publicFile.exists()) {
             try {
-                return Response.status(200).entity(publicFile).type(Files.probeContentType(publicFile.toPath())).build();
+                final String contentType = Files.probeContentType(publicFile.toPath());
+                return Response.status(200).entity(publicFile).header("Content-Type", contentType).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + publicFile + ".", e);
                 return Response.status(500).build();
@@ -136,7 +137,8 @@ public class ContentMediator {
         final File uvaFile = new File(getUVAContentPath(id), filename);
         if (uvaFile.exists()) {
             try {
-                return Response.status(200).entity(uvaFile).type(Files.probeContentType(uvaFile.toPath())).build();
+                final String contentType = Files.probeContentType(uvaFile.toPath());
+                return Response.status(200).entity(uvaFile).header("Content-Type", contentType).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + uvaFile + ".", e);
                 return Response.status(500).build();
