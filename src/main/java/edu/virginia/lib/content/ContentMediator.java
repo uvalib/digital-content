@@ -96,9 +96,7 @@ public class ContentMediator {
     }
 
     private Response redirectToFile(final String id, final File file, final String authpath) throws URISyntaxException {
-        File[] files = file.listFiles((File dir, String name) -> {
-            return !name.startsWith(".");
-        });
+        File[] files = file.listFiles((File pathname) -> !pathname.isHidden() && pathname.isFile());
         if (files.length != 1) {
             LOGGER.error("There must be exactly one non-hidden file for a given identifier. ("
                     + file.getAbsolutePath() + " has " + files.length + ")");
