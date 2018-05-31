@@ -12,8 +12,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.util.Properties;
 
@@ -102,14 +105,15 @@ public class ContentMediator {
                     + file.getAbsolutePath() + " has " + files.length + ")");
             return Response.status(404).build();
         } else {
-            return Response.temporaryRedirect(new URI(getHost() + (authpath != null && !authpath.equals("") ? "/" + authpath : "")
-                            + "/" + id + "/" + files[0].getName())).build();
+            return Response.temporaryRedirect(new URI(getHost() + (authpath != null && !authpath.equals("")
+                    ? "/" + authpath : "") + "/" + id + "/" + encodeFilename(files[0].getName()))).build();
         }
     }
 
     @Path("{id}/{filename}")
     @GET
-    public Response getFile(@PathParam("id") final String id, @PathParam("filename") final String filename) {
+    public Response getFile(@PathParam("id") final String id, @PathParam("filename") String filename) {
+        filename = decodeFilename(filename);
         LOGGER.debug("Request for /" + id + "/" + filename);
         final File publicFile = new File(getPublicContentPath(id), filename);
         if (publicFile.exists()) {
@@ -129,7 +133,8 @@ public class ContentMediator {
      */
     @Path("uva/{id}/{filename}")
     @GET
-    public Response getUvaFile(@PathParam("id") final String id, @PathParam("filename") final String filename) {
+    public Response getUvaFile(@PathParam("id") final String id, @PathParam("filename") String filename) {
+        filename = decodeFilename(filename);
         LOGGER.debug("Request for /uva/" + id + "/" + filename);
         final File uvaFile = new File(getUVAContentPath(id), filename);
         if (uvaFile.exists()) {
@@ -141,6 +146,22 @@ public class ContentMediator {
             }
         } else {
             return Response.status(404).build();
+        }
+    }
+
+    private String encodeFilename(final String filename) {
+        try {
+            return URLEncoder.encode(filename, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String decodeFilename(final String filename) {
+        try {
+            return URLDecoder.decode(filename, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 
