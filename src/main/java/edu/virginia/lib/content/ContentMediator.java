@@ -1,5 +1,6 @@
 package edu.virginia.lib.content;
 
+import org.apache.tika.Tika;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,13 +18,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.util.Properties;
 
 @Path("/")
 public class ContentMediator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContentMediator.class);
+
+    private static final Tika TIKA = new Tika();
 
     private static File getContentPath() {
         if (System.getenv("CONTENT_PATH") == null) {
@@ -165,8 +167,8 @@ public class ContentMediator {
         }
     }
 
-    private static String getMimeType(final File f) throws IOException {
-        final String contentType = Files.probeContentType(f.toPath());
+    public static String getMimeType(final File f) throws IOException {
+        final String contentType = TIKA.detect(f);
         if (contentType == null && f.getName().endsWith(".pdf")) {
             return "application/pdf";
         }
