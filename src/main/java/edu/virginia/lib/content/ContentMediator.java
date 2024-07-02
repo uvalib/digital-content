@@ -120,7 +120,7 @@ public class ContentMediator {
         final File publicFile = new File(getPublicContentPath(id), filename);
         if (publicFile.exists()) {
             try {
-                return Response.status(200).entity(publicFile).header("Content-Type", getMimeType(publicFile)).build();
+                return Response.status(200).entity(publicFile).header("Content-Disposition", "attachment; filename=\"" + filename + "\"").header("Content-Type", getMimeType(publicFile)).build();
             } catch (IOException e) {
                 LOGGER.error("Error probing mime type for " + publicFile + ".", e);
                 return Response.status(500).build();
